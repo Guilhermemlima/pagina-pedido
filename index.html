@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Uma pergunta pra você 💌</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-1:#1a0b1f;
+    --bg-2:#2d0f2c;
+    --rosa:#ff6b9d;
+    --rosa-claro:#ffb3cd;
+    --creme:#fff1f6;
+    --dourado:#ffd6a5;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;margin:0}
+  body{
+    background:radial-gradient(120% 120% at 50% 0%, var(--bg-2) 0%, var(--bg-1) 60%, #0d0510 100%);
+    color:var(--creme);
+    font-family:'Quicksand',system-ui,-apple-system,'Segoe UI',sans-serif;
+    overflow:hidden;
+    display:grid;
+    place-items:center;
+  }
+
+  /* brilhos de fundo */
+  .blob{position:fixed;border-radius:50%;filter:blur(80px);opacity:.35;pointer-events:none;z-index:0}
+  .blob.a{width:46vmax;height:46vmax;background:#ff2d6f;top:-18vmax;left:-14vmax}
+  .blob.b{width:38vmax;height:38vmax;background:#7b2ff7;bottom:-16vmax;right:-12vmax}
+  .blob.c{width:30vmax;height:30vmax;background:#ff9a5a;bottom:10vmax;left:-10vmax;opacity:.22}
+
+  #hearts{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+  .heart{position:absolute;will-change:transform,opacity;user-select:none}
+
+  #stage{position:relative;z-index:2;width:min(680px,92vw);padding:24px;text-align:center}
+
+  /* ---- intro ---- */
+  #intro{min-height:46vh;display:grid;place-items:center}
+  #frase{
+    font-family:'Playfair Display',Georgia,serif;
+    font-size:clamp(1.5rem,5.2vw,2.6rem);
+    line-height:1.35;margin:0;font-weight:500;
+    text-wrap:balance;
+  }
+  .word{display:inline-block;white-space:pre}
+
+  #skip{
+    position:fixed;right:18px;bottom:16px;z-index:5;
+    background:none;border:0;color:rgba(255,241,246,.4);
+    font-family:inherit;font-size:.85rem;letter-spacing:.06em;
+    cursor:pointer;padding:8px 10px;transition:color .25s;
+  }
+  #skip:hover{color:rgba(255,241,246,.85)}
+
+  /* ---- pergunta ---- */
+  #pergunta{display:none;position:relative}
+  .selo{
+    font-size:.75rem;letter-spacing:.32em;text-transform:uppercase;
+    color:var(--rosa-claro);opacity:.8;margin-bottom:18px;
+  }
+  h1{
+    font-family:'Playfair Display',Georgia,serif;
+    font-size:clamp(2rem,8vw,3.6rem);
+    font-weight:700;line-height:1.15;margin:0 0 10px;
+    background:linear-gradient(100deg,#fff 10%,var(--rosa-claro) 50%,var(--dourado) 90%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    text-wrap:balance;
+  }
+  .sub{color:rgba(255,241,246,.62);font-size:clamp(.95rem,3.4vw,1.1rem);margin:0 0 34px}
+
+  #botoes{
+    position:relative;min-height:180px;
+    display:flex;gap:18px;align-items:center;justify-content:center;flex-wrap:wrap;
+  }
+  button.escolha{
+    font-family:'Quicksand',sans-serif;font-weight:700;
+    font-size:clamp(1rem,4vw,1.25rem);
+    padding:16px 38px;border-radius:999px;border:0;cursor:pointer;
+    transition:box-shadow .3s,filter .3s;
+  }
+  #sim{
+    background:linear-gradient(135deg,#ff4d8d,#ff8fb1 60%,#ffc7a0);
+    color:#3a0a20;box-shadow:0 12px 34px rgba(255,77,141,.45);
+  }
+  #sim:hover{filter:brightness(1.07);box-shadow:0 16px 44px rgba(255,77,141,.6)}
+  #nao{
+    background:rgba(255,255,255,.07);color:rgba(255,241,246,.72);
+    border:1px solid rgba(255,255,255,.16);
+    position:relative;
+  }
+
+  /* ---- final ---- */
+  #final{display:none}
+  #final h2{
+    font-family:'Playfair Display',Georgia,serif;
+    font-size:clamp(2.1rem,9vw,4rem);margin:0 0 14px;font-weight:700;
+    background:linear-gradient(100deg,#fff,var(--rosa-claro),var(--dourado));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  #final p{color:rgba(255,241,246,.75);font-size:clamp(1rem,3.8vw,1.2rem);margin:0}
+  #indo{margin-top:26px;font-size:.9rem;color:rgba(255,241,246,.45)}
+  #indo a{color:var(--rosa-claro)}
+  .barra{width:190px;height:3px;border-radius:99px;background:rgba(255,255,255,.14);margin:16px auto 0;overflow:hidden}
+  .barra i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--rosa),var(--dourado));border-radius:99px}
+
+  @media (max-width:520px){
+    button.escolha{padding:15px 30px}
+    #botoes{min-height:220px}
+  }
+</style>
+</head>
+<body>
+
+<!-- =========================================================
+     PERSONALIZE AQUI
+     ========================================================= -->
+<script>
+  // 1) Para onde ela vai depois de clicar em "Sim":
+  const DESTINO = "https://SEU-SITE-AQUI.com";
+
+  // 2) O nome dela:
+  const NOME = "meu amor";
+
+  // 3) As frases da introducao (pode adicionar ou remover a vontade):
+  const FRASES = [
+    "Oi, " + NOME + "...",
+    "Eu fiquei um tempão pensando em como te falar isso.",
+    "Aí eu percebi que eu só precisava ser sincero.",
+    "Desde que você apareceu, meus dias ficaram muito mais bonitos. ✨"
+  ];
+
+  // 4) A pergunta e a tela final:
+  const PERGUNTA    = "Quer namorar comigo?";
+  const SUBTITULO   = "Sem pressa. Mas eu já sei a minha resposta. 💗";
+  const TITULO_SIM  = "EU TE AMO! 💖";
+  const TEXTO_SIM   = "Você acabou de me deixar a pessoa mais feliz do mundo.";
+
+  // 5) O botao "Nao" foge e vai trocando de texto:
+  const TEIMOSIAS = ["Não","Tem certeza?","Pensa bem...","Sério mesmo?","Olha o meu coração!","Última chance!","Tá difícil, hein 😅"];
+</script>
+<!-- ========================================================= -->
+
+<div class="blob a"></div>
+<div class="blob b"></div>
+<div class="blob c"></div>
+<div id="hearts"></div>
+
+<div id="stage">
+  <section id="intro"><p id="frase"></p></section>
+
+  <section id="pergunta">
+    <div class="selo">uma pergunta importante</div>
+    <h1 id="titulo"></h1>
+    <p class="sub" id="sub"></p>
+    <div id="botoes">
+      <button class="escolha" id="sim">Sim! 💖</button>
+      <button class="escolha" id="nao">Não</button>
+    </div>
+  </section>
+
+  <section id="final">
+    <h2 id="ftitulo"></h2>
+    <p id="ftexto"></p>
+    <div id="indo" hidden>
+      te levando pra uma surpresa...
+      <div class="barra"><i></i></div>
+      <div style="margin-top:12px"><a href="#" id="link">clique aqui se não abrir sozinho</a></div>
+    </div>
+  </section>
+</div>
+
+<button id="skip">pular ›</button>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+(function(){
+  const reduz = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = s => document.querySelector(s);
+
+  /* ---------- coracoes flutuando no fundo ---------- */
+  const caixa = $('#hearts');
+  const EMOJIS = ['💗','💖','💘','💕','❤️','🌸','✨'];
+  function coracao(x, y, tam){
+    const el = document.createElement('span');
+    el.className = 'heart';
+    el.textContent = EMOJIS[(Math.random()*EMOJIS.length)|0];
+    el.style.fontSize = tam + 'px';
+    el.style.left = x + 'px';
+    el.style.top  = y + 'px';
+    caixa.appendChild(el);
+    return el;
+  }
+  function flutuar(){
+    const el = coracao(Math.random()*innerWidth, innerHeight + 40, 14 + Math.random()*26);
+    gsap.fromTo(el, {opacity:0}, {opacity:.55, duration:1.2, ease:'power1.out'});
+    gsap.to(el, {
+      y: -(innerHeight + 140),
+      x: (Math.random()-.5) * 220,
+      rotation: (Math.random()-.5)*90,
+      duration: 9 + Math.random()*8,
+      ease: 'none',
+      onComplete(){ el.remove(); }
+    });
+    gsap.to(el, {opacity:0, duration:2.5, delay: 6 + Math.random()*6});
+  }
+  if(!reduz){
+    for(let i=0;i<10;i++) setTimeout(flutuar, i*400);
+    setInterval(flutuar, 900);
+  }
+
+  /* ---------- blobs respirando ---------- */
+  gsap.to('.blob.a', {xPercent:12,  yPercent:10,  scale:1.15, duration:14, yoyo:true, repeat:-1, ease:'sine.inOut'});
+  gsap.to('.blob.b', {xPercent:-14, yPercent:-8,  scale:1.2,  duration:17, yoyo:true, repeat:-1, ease:'sine.inOut'});
+  gsap.to('.blob.c', {xPercent:16,  yPercent:-12,             duration:20, yoyo:true, repeat:-1, ease:'sine.inOut'});
+
+  /* ---------- intro: frase por frase, palavra por palavra ---------- */
+  const frase = $('#frase');
+  function escrever(txt){
+    frase.innerHTML = '';
+    txt.split(' ').forEach(p => {
+      const s = document.createElement('span');
+      s.className = 'word';
+      s.textContent = p + ' ';
+      frase.appendChild(s);
+    });
+    return frase.querySelectorAll('.word');
+  }
+
+  const intro = gsap.timeline({delay:.5, onComplete: mostrarPergunta});
+  FRASES.forEach(txt => {
+    intro.set('#frase', {opacity:1, y:0, filter:'blur(0px)'});
+    intro.add(() => {
+      const palavras = escrever(txt);
+      gsap.from(palavras, {y:26, opacity:0, filter:'blur(8px)', duration:.85, stagger:.08, ease:'power3.out'});
+    });
+    intro.to({}, {duration: 1.9 + txt.length*0.02});
+    intro.to('#frase', {opacity:0, y:-18, filter:'blur(6px)', duration:.6, ease:'power2.in'});
+  });
+
+  /* ---------- pergunta ---------- */
+  $('#titulo').textContent  = PERGUNTA;
+  $('#sub').textContent     = SUBTITULO;
+  $('#ftitulo').textContent = TITULO_SIM;
+  $('#ftexto').textContent  = TEXTO_SIM;
+
+  let jaMostrou = false;
+  function mostrarPergunta(){
+    if(jaMostrou) return;
+    jaMostrou = true;
+    intro.kill();
+    $('#skip').style.display = 'none';
+    gsap.to('#intro', {opacity:0, duration:.4, onComplete(){
+      $('#intro').style.display = 'none';
+      $('#pergunta').style.display = 'block';
+      gsap.timeline()
+        .from('.selo',   {opacity:0, y:14, duration:.6, ease:'power2.out'})
+        .from('#titulo', {opacity:0, y:34, scale:.92, duration:.9, ease:'back.out(1.5)'}, '-=.25')
+        .from('.sub',    {opacity:0, y:16, duration:.6}, '-=.5')
+        .from('#sim',    {opacity:0, scale:.6, duration:.6, ease:'back.out(2)'}, '-=.3')
+        .from('#nao',    {opacity:0, scale:.6, duration:.6, ease:'back.out(2)'}, '-=.45')
+        .add(() => { gsap.to('#sim', {scale:1.05, duration:1.1, yoyo:true, repeat:-1, ease:'sine.inOut'}); });
+    }});
+  }
+  $('#skip').addEventListener('click', mostrarPergunta);
+
+  /* ---------- o botao "Nao" foge ---------- */
+  const nao = $('#nao'), sim = $('#sim'), area = $('#botoes');
+  let fugas = 0;
+  function fugir(e){
+    if(e && e.cancelable) e.preventDefault();
+    fugas++;
+    nao.textContent = TEIMOSIAS[Math.min(fugas, TEIMOSIAS.length-1)];
+
+    const a = area.getBoundingClientRect(), b = nao.getBoundingClientRect();
+    const maxX = Math.max(10, (a.width  - b.width)/2  + 30);
+    const maxY = Math.max(10, (a.height - b.height)/2 - 6);
+
+    gsap.to(nao, {
+      x: gsap.utils.random(-maxX, maxX),
+      y: gsap.utils.random(-maxY, maxY),
+      scale: Math.max(.42, 1 - fugas*0.09),
+      rotation: gsap.utils.random(-14,14),
+      duration:.38, ease:'power3.out', overwrite:'auto'
+    });
+    gsap.to(sim, {scale: 1 + fugas*0.07, duration:.4, ease:'back.out(2)', overwrite:'auto'});
+
+    if(fugas >= TEIMOSIAS.length){
+      nao.style.pointerEvents = 'none';
+      gsap.to(nao, {opacity:0, scale:0, duration:.5, delay:.6, ease:'back.in(2)'});
+      gsap.to(sim, {scale:1.25, duration:.6, ease:'elastic.out(1,.5)', overwrite:'auto',
+        onComplete(){ gsap.to(sim, {scale:1.32, duration:1, yoyo:true, repeat:-1, ease:'sine.inOut'}); }});
+    }
+  }
+  nao.addEventListener('mouseenter', fugir);
+  nao.addEventListener('touchstart', fugir, {passive:false});
+  nao.addEventListener('click', fugir);
+
+  /* ---------- explosao de coracoes ---------- */
+  function explodir(){
+    const r = sim.getBoundingClientRect();
+    const cx = r.left + r.width/2, cy = r.top + r.height/2;
+    for(let i=0;i<70;i++){
+      const el = coracao(cx, cy, 16 + Math.random()*34);
+      const ang = Math.random()*Math.PI*2, dist = 140 + Math.random()*520;
+      gsap.set(el, {xPercent:-50, yPercent:-50});
+      gsap.to(el, {
+        x: Math.cos(ang)*dist,
+        y: Math.sin(ang)*dist - 120,
+        rotation: gsap.utils.random(-300,300),
+        opacity: 0,
+        duration: 1.6 + Math.random()*1.6,
+        ease:'power2.out',
+        onComplete(){ el.remove(); }
+      });
+    }
+  }
+
+  /* ---------- SIM ---------- */
+  let respondeu = false;
+  sim.addEventListener('click', () => {
+    if(respondeu) return;
+    respondeu = true;
+    gsap.killTweensOf(sim);
+    explodir();
+
+    gsap.timeline()
+      .to(sim, {scale:1.45, duration:.16, ease:'power2.out'})
+      .to('#pergunta', {opacity:0, scale:.9, filter:'blur(10px)', duration:.6, ease:'power2.in'})
+      .add(() => {
+        $('#pergunta').style.display = 'none';
+        $('#final').style.display = 'block';
+      })
+      .from('#ftitulo', {opacity:0, scale:.6, y:30, duration:1, ease:'back.out(1.7)'})
+      .from('#ftexto',  {opacity:0, y:20, duration:.7}, '-=.5')
+      .add(irEmbora);
+
+    if(!reduz) for(let i=0;i<40;i++) setTimeout(flutuar, i*90);
+  });
+
+  /* ---------- redirecionar ---------- */
+  function irEmbora(){
+    if(!DESTINO || /SEU-SITE-AQUI/.test(DESTINO)){
+      console.warn('Edite a constante DESTINO no topo do index.html para ativar o redirecionamento.');
+      return;
+    }
+    const indo = $('#indo');
+    indo.hidden = false;
+    $('#link').href = DESTINO;
+    gsap.from(indo, {opacity:0, y:14, duration:.6});
+    gsap.to('.barra i', {
+      width:'100%', duration:3, ease:'power1.inOut',
+      onComplete(){ window.location.href = DESTINO; }
+    });
+  }
+})();
+</script>
+</body>
+</html>
