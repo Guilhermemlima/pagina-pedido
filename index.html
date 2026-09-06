@@ -107,13 +107,6 @@
   #sim{font-size:clamp(1.05rem,4.2vw,1.3rem);padding:17px 44px}
 
   /* ---- final ---- */
-  #ftitulo{
-    font-family:'Playfair Display',Georgia,serif;
-    font-size:clamp(1.8rem,7.4vw,3rem);margin:0 0 30px;font-weight:700;
-    line-height:1.2;
-    background:linear-gradient(100deg,#fff,var(--rosa-claro),var(--dourado));
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-  }
   #ir{margin-top:36px}
 
   /* ---- progresso ---- */
@@ -239,7 +232,6 @@
   const PERGUNTA = "Quer namorar comigo? ❤️";
 
   // 6) A tela depois do SIM:
-  const TITULO_SIM = "ELA CLICOU EM SIM ❤️";
   const FINAL = [
     "Então é oficial…",
     "Agora existe um “nós”. 🥰❤️",
@@ -276,7 +268,6 @@
   </section>
 
   <section id="final">
-    <h2 id="ftitulo"></h2>
     <div id="flinhas"></div>
     <a class="btn principal" id="ir" href="#"></a>
   </section>
@@ -383,7 +374,6 @@
   /* ---------- pergunta ---------- */
   $('#selo').textContent    = SELO;
   $('#titulo').textContent  = PERGUNTA;
-  $('#ftitulo').textContent = TITULO_SIM;
   $('#ir').textContent      = BOTAO_FINAL;
   $('#ir').href             = DESTINO;
   FINAL.forEach(txt => {
@@ -478,8 +468,7 @@
         gsap.set('#progresso', {opacity:0});
         window.scrollTo(0,0);
       })
-      .from('#ftitulo', {opacity:0, scale:.7, y:26, duration:1, ease:'back.out(1.7)'})
-      .from('#flinhas .linha', {opacity:0, y:18, filter:'blur(6px)', duration:.8, stagger:.45, ease:'power2.out'}, '-=.4')
+      .from('#flinhas .linha', {opacity:0, y:18, filter:'blur(6px)', duration:.8, stagger:.45, ease:'power2.out'})
       .from('#ir', {opacity:0, scale:.8, duration:.8, ease:'back.out(1.8)'}, '-=.2')
       .add(() => { gsap.to('#ir', {scale:1.05, duration:1.2, yoyo:true, repeat:-1, ease:'sine.inOut'}); });
 
