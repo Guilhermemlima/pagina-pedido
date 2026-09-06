@@ -6,7 +6,7 @@
 <title>Uma pergunta pra você 💌</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg-1:#1a0b1f;
@@ -17,14 +17,14 @@
     --dourado:#ffd6a5;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  html,body{height:100%;margin:0}
+  html{height:100%}
   body{
-    background:radial-gradient(120% 120% at 50% 0%, var(--bg-2) 0%, var(--bg-1) 60%, #0d0510 100%);
+    min-height:100%;margin:0;
+    background:radial-gradient(120% 120% at 50% 0%, var(--bg-2) 0%, var(--bg-1) 60%, #0d0510 100%)
+               fixed;
     color:var(--creme);
     font-family:'Quicksand',system-ui,-apple-system,'Segoe UI',sans-serif;
-    overflow:hidden;
-    display:grid;
-    place-items:center;
+    overflow-x:hidden;
   }
 
   /* brilhos de fundo */
@@ -36,80 +36,100 @@
   #hearts{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden}
   .heart{position:absolute;will-change:transform,opacity;user-select:none}
 
-  #stage{position:relative;z-index:2;width:min(680px,92vw);padding:24px;text-align:center}
+  #stage{
+    position:relative;z-index:2;
+    min-height:100vh;min-height:100dvh;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:34px;
+    width:min(640px,92vw);margin:0 auto;
+    padding:70px 20px 90px;text-align:center;
+  }
 
-  /* ---- intro ---- */
-  #intro{min-height:46vh;display:grid;place-items:center}
-  #frase{
+  /* ---- capitulos ---- */
+  section{width:100%}
+  #pergunta,#final{display:none}
+
+  .linha{
     font-family:'Playfair Display',Georgia,serif;
-    font-size:clamp(1.5rem,5.2vw,2.6rem);
-    line-height:1.35;margin:0;font-weight:500;
-    text-wrap:balance;
+    font-size:clamp(1.12rem,4.3vw,1.5rem);
+    line-height:1.6;font-weight:500;
+    margin:0 0 18px;
+    text-wrap:pretty;
   }
-  .word{display:inline-block;white-space:pre}
+  .linha:last-of-type{margin-bottom:0}
+  .linha.abertura{
+    font-size:clamp(1.7rem,7vw,2.7rem);
+    font-weight:700;line-height:1.25;margin-bottom:26px;
+    background:linear-gradient(100deg,#fff 10%,var(--rosa-claro) 55%,var(--dourado) 95%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
 
-  #skip{
-    position:fixed;right:18px;bottom:16px;z-index:5;
-    background:none;border:0;color:rgba(255,241,246,.4);
-    font-family:inherit;font-size:.85rem;letter-spacing:.06em;
-    cursor:pointer;padding:8px 10px;transition:color .25s;
+  /* ---- botoes ---- */
+  .btn{
+    display:inline-block;
+    font-family:'Quicksand',sans-serif;font-weight:700;
+    font-size:clamp(.95rem,3.6vw,1.1rem);
+    letter-spacing:.02em;
+    padding:15px 34px;border-radius:999px;border:0;cursor:pointer;
+    text-decoration:none;
+    transition:box-shadow .3s,filter .3s;
   }
-  #skip:hover{color:rgba(255,241,246,.85)}
+  .btn.principal{
+    background:linear-gradient(135deg,#ff4d8d,#ff8fb1 60%,#ffc7a0);
+    color:#3a0a20;box-shadow:0 12px 34px rgba(255,77,141,.45);
+  }
+  .btn.principal:hover{filter:brightness(1.07);box-shadow:0 16px 44px rgba(255,77,141,.6)}
+  .btn.discreto{
+    background:rgba(255,255,255,.06);color:var(--creme);
+    border:1px solid rgba(255,255,255,.22);
+  }
+  .btn.discreto:hover{background:rgba(255,255,255,.12)}
+
+  #avancar{margin-top:34px}
 
   /* ---- pergunta ---- */
-  #pergunta{display:none;position:relative}
   .selo{
-    font-size:.75rem;letter-spacing:.32em;text-transform:uppercase;
-    color:var(--rosa-claro);opacity:.8;margin-bottom:18px;
+    font-size:.72rem;letter-spacing:.32em;text-transform:uppercase;
+    color:var(--rosa-claro);opacity:.75;margin-bottom:18px;
   }
   h1{
     font-family:'Playfair Display',Georgia,serif;
-    font-size:clamp(2rem,8vw,3.6rem);
-    font-weight:700;line-height:1.15;margin:0 0 10px;
+    font-size:clamp(2rem,8vw,3.4rem);
+    font-weight:700;line-height:1.15;margin:0 0 34px;
     background:linear-gradient(100deg,#fff 10%,var(--rosa-claro) 50%,var(--dourado) 90%);
     -webkit-background-clip:text;background-clip:text;color:transparent;
     text-wrap:balance;
   }
-  .sub{color:rgba(255,241,246,.62);font-size:clamp(.95rem,3.4vw,1.1rem);margin:0 0 34px}
-
   #botoes{
-    position:relative;min-height:180px;
-    display:flex;gap:18px;align-items:center;justify-content:center;flex-wrap:wrap;
+    position:relative;min-height:170px;
+    display:flex;gap:16px;align-items:center;justify-content:center;flex-wrap:wrap;
   }
-  button.escolha{
-    font-family:'Quicksand',sans-serif;font-weight:700;
-    font-size:clamp(1rem,4vw,1.25rem);
-    padding:16px 38px;border-radius:999px;border:0;cursor:pointer;
-    transition:box-shadow .3s,filter .3s;
-  }
-  #sim{
-    background:linear-gradient(135deg,#ff4d8d,#ff8fb1 60%,#ffc7a0);
-    color:#3a0a20;box-shadow:0 12px 34px rgba(255,77,141,.45);
-  }
-  #sim:hover{filter:brightness(1.07);box-shadow:0 16px 44px rgba(255,77,141,.6)}
-  #nao{
-    background:rgba(255,255,255,.07);color:rgba(255,241,246,.72);
-    border:1px solid rgba(255,255,255,.16);
-    position:relative;
-  }
+  #sim{font-size:clamp(1.05rem,4.2vw,1.3rem);padding:17px 44px}
 
   /* ---- final ---- */
-  #final{display:none}
-  #final h2{
+  #ftitulo{
     font-family:'Playfair Display',Georgia,serif;
-    font-size:clamp(2.1rem,9vw,4rem);margin:0 0 14px;font-weight:700;
+    font-size:clamp(1.8rem,7.4vw,3rem);margin:0 0 30px;font-weight:700;
+    line-height:1.2;
     background:linear-gradient(100deg,#fff,var(--rosa-claro),var(--dourado));
     -webkit-background-clip:text;background-clip:text;color:transparent;
   }
-  #final p{color:rgba(255,241,246,.75);font-size:clamp(1rem,3.8vw,1.2rem);margin:0}
-  #indo{margin-top:26px;font-size:.9rem;color:rgba(255,241,246,.45)}
-  #indo a{color:var(--rosa-claro)}
-  .barra{width:190px;height:3px;border-radius:99px;background:rgba(255,255,255,.14);margin:16px auto 0;overflow:hidden}
-  .barra i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--rosa),var(--dourado));border-radius:99px}
+  #ir{margin-top:36px}
+
+  /* ---- progresso ---- */
+  #progresso{
+    position:fixed;left:50%;transform:translateX(-50%);bottom:22px;z-index:4;
+    display:flex;gap:7px;
+  }
+  #progresso i{
+    width:6px;height:6px;border-radius:50%;
+    background:rgba(255,255,255,.18);transition:background .5s,transform .5s;
+  }
+  #progresso i.ativo{background:var(--rosa-claro);transform:scale(1.4)}
 
   @media (max-width:520px){
-    button.escolha{padding:15px 30px}
-    #botoes{min-height:220px}
+    #stage{gap:26px;padding:56px 18px 80px}
+    #botoes{min-height:200px}
   }
 </style>
 </head>
@@ -119,28 +139,118 @@
      PERSONALIZE AQUI
      ========================================================= -->
 <script>
-  // 1) Para onde ela vai depois de clicar em "Sim":
+  // 1) Para onde ela vai no fim:
   const DESTINO = "https://aslendas.vercel.app/entrar";
 
   // 2) O nome dela:
   const NOME = "meu amor";
 
-  // 3) As frases da introducao (pode adicionar ou remover a vontade):
-  const FRASES = [
-    "Oi, " + NOME + ".",
-    "Se eu fosse te falar isso pessoalmente, eu ia gaguejar. Então deixa eu tentar assim.",
-    "Você tem esse jeito de pegar um dia qualquer e transformar no melhor da semana.",
-    "E eu cansei de sentir sua falta no intervalo entre um “até logo” e um “oi de novo”.",
-    "Então tem uma coisa que eu preciso te perguntar. Dessa vez sem ensaio. 💭"
+  // 3) Mostrar o botao "Nao" que foge? (true = sim, false = so o "SIM")
+  const MOSTRAR_NAO = true;
+
+  // 4) O roteiro. Cada bloco e uma tela; ela avanca clicando no botao.
+  //    "abertura: true" deixa a primeira linha grande e dourada.
+  const ROTEIRO = [
+    {
+      abertura: true,
+      linhas: [
+        "Ei, " + NOME + "… ❤️",
+        "Antes de qualquer coisa, preciso que você saiba que eu preparei isso pensando em você.",
+        "Não é apenas um site.",
+        "É uma pequena forma de tentar colocar em palavras algumas coisas que, quando estou perto de você, nem sempre consigo explicar."
+      ],
+      botao: "COMEÇAR ❤️"
+    },
+    {
+      linhas: [
+        "Talvez tudo tenha começado de um jeito simples…",
+        "Uma conversa.",
+        "Um sorriso.",
+        "Um momento qualquer.",
+        "Mas, em algum momento no meio disso tudo, você deixou de ser apenas alguém que eu estava conhecendo…",
+        "E começou a se tornar alguém que eu queria cada vez mais perto."
+      ],
+      botao: "continuar"
+    },
+    {
+      linhas: [
+        "Eu comecei a perceber que…",
+        "Seu sorriso conseguia melhorar meu dia.",
+        "Que receber uma mensagem sua me deixava feliz.",
+        "Que nossos momentos juntos nunca pareciam durar o suficiente.",
+        "E que, quando alguma coisa boa acontecia, você era uma das primeiras pessoas para quem eu queria contar."
+      ],
+      botao: "continuar"
+    },
+    {
+      linhas: [
+        "E então eu percebi uma coisa…",
+        "Eu não quero que você seja apenas uma parte bonita dos meus dias.",
+        "Quero que você faça parte da minha vida.",
+        "Quero criar memórias com você.",
+        "Quero conhecer cada versão sua.",
+        "Quero estar nos dias incríveis…",
+        "mas também naqueles em que tudo que você precisa é de um abraço."
+      ],
+      botao: "continuar"
+    },
+    {
+      linhas: [
+        "Talvez eu pudesse simplesmente olhar para você e fazer uma pergunta.",
+        "Mas você se tornou especial demais para mim para que eu fizesse isso de qualquer jeito.",
+        "Então eu preparei tudo isso…",
+        "Só para chegar até este momento."
+      ],
+      botao: "continuar"
+    },
+    {
+      linhas: [
+        "Antes de continuar…",
+        "Tenho uma última coisa para te dizer.",
+        "Se você aceitar o que eu estou prestes a te perguntar, isso aqui não termina.",
+        "Na verdade…",
+        "É justamente aqui que começa. ❤️"
+      ],
+      botao: "continuar"
+    },
+    {
+      abertura: true,
+      linhas: [ "Então…" ],
+      botao: "clique quando estiver pronta ❤️"
+    },
+    {
+      linhas: [
+        "❤️",
+        "Eu escolho você.",
+        "Escolho o seu sorriso.",
+        "O seu jeito.",
+        "Suas manias.",
+        "Nossas conversas.",
+        "Nossos momentos.",
+        "E escolho tudo aquilo que ainda podemos viver juntos.",
+        "Por isso, hoje eu quero te fazer uma pergunta muito importante…"
+      ],
+      botao: "quero saber ❤️"
+    }
   ];
 
-  // 4) A pergunta e a tela final:
-  const PERGUNTA    = "Quer namorar comigo?";
-  const SUBTITULO   = "Pode pensar com calma. Eu já pensei — e a resposta é você. 💗";
-  const TITULO_SIM  = "VOCÊ DISSE SIM! 💖";
-  const TEXTO_SIM   = "Então vem, deixa eu te mostrar o nosso universo.";
+  // 5) A pergunta:
+  const SELO     = "chegou a hora";
+  const PERGUNTA = "Quer namorar comigo? ❤️";
 
-  // 5) O botao "Nao" foge e vai trocando de texto:
+  // 6) A tela depois do SIM:
+  const TITULO_SIM = "ELA CLICOU EM SIM ❤️";
+  const FINAL = [
+    "Então é oficial…",
+    "Agora existe um “nós”. 🥰❤️",
+    "E se você acha que eu preparei tudo isso apenas para te fazer essa pergunta… está enganada.",
+    "Porque eu preparei mais uma coisinha para você.",
+    "Esse foi apenas o começo da nossa história.",
+    "E a partir de agora, quero guardar cada pedacinho dela."
+  ];
+  const BOTAO_FINAL = "CONHECER O NOSSO CANTINHO ❤️";
+
+  // 7) O botao "Nao" foge e vai trocando de texto:
   const TEIMOSIAS = ["Não","Tem certeza?","Pensa com carinho...","Eu vi você sorrindo, hein","Esse botão não funciona 😌","Tá fugindo de mim? 🥺","Desiste, vai...","Tá bom: eu insisto. SIM! 💘"];
 </script>
 <!-- ========================================================= -->
@@ -151,30 +261,28 @@
 <div id="hearts"></div>
 
 <div id="stage">
-  <section id="intro"><p id="frase"></p></section>
+  <section id="capitulo">
+    <div id="linhas"></div>
+    <button class="btn principal" id="avancar"></button>
+  </section>
 
   <section id="pergunta">
-    <div class="selo">sem ensaio, de coração</div>
+    <div class="selo" id="selo"></div>
     <h1 id="titulo"></h1>
-    <p class="sub" id="sub"></p>
     <div id="botoes">
-      <button class="escolha" id="sim">Sim! 💖</button>
-      <button class="escolha" id="nao">Não</button>
+      <button class="btn principal" id="sim">SIM ❤️</button>
+      <button class="btn discreto" id="nao">Não</button>
     </div>
   </section>
 
   <section id="final">
     <h2 id="ftitulo"></h2>
-    <p id="ftexto"></p>
-    <div id="indo" hidden>
-      abrindo o nosso universo...
-      <div class="barra"><i></i></div>
-      <div style="margin-top:12px"><a href="#" id="link">clique aqui se não abrir sozinho</a></div>
-    </div>
+    <div id="flinhas"></div>
+    <a class="btn principal" id="ir" href="#"></a>
   </section>
 </div>
 
-<button id="skip">pular ›</button>
+<div id="progresso"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script>
@@ -197,20 +305,20 @@
   }
   function flutuar(){
     const el = coracao(Math.random()*innerWidth, innerHeight + 40, 14 + Math.random()*26);
-    gsap.fromTo(el, {opacity:0}, {opacity:.55, duration:1.2, ease:'power1.out'});
+    gsap.fromTo(el, {opacity:0}, {opacity:.5, duration:1.2, ease:'power1.out'});
     gsap.to(el, {
       y: -(innerHeight + 140),
       x: (Math.random()-.5) * 220,
       rotation: (Math.random()-.5)*90,
-      duration: 9 + Math.random()*8,
+      duration: 10 + Math.random()*8,
       ease: 'none',
       onComplete(){ el.remove(); }
     });
-    gsap.to(el, {opacity:0, duration:2.5, delay: 6 + Math.random()*6});
+    gsap.to(el, {opacity:0, duration:2.5, delay: 7 + Math.random()*6});
   }
   if(!reduz){
-    for(let i=0;i<10;i++) setTimeout(flutuar, i*400);
-    setInterval(flutuar, 900);
+    for(let i=0;i<8;i++) setTimeout(flutuar, i*450);
+    setInterval(flutuar, 1100);
   }
 
   /* ---------- blobs respirando ---------- */
@@ -218,102 +326,135 @@
   gsap.to('.blob.b', {xPercent:-14, yPercent:-8,  scale:1.2,  duration:17, yoyo:true, repeat:-1, ease:'sine.inOut'});
   gsap.to('.blob.c', {xPercent:16,  yPercent:-12,             duration:20, yoyo:true, repeat:-1, ease:'sine.inOut'});
 
-  /* ---------- intro: frase por frase, palavra por palavra ---------- */
-  const frase = $('#frase');
-  function escrever(txt){
-    frase.innerHTML = '';
-    txt.split(' ').forEach(p => {
-      const s = document.createElement('span');
-      s.className = 'word';
-      s.textContent = p + ' ';
-      frase.appendChild(s);
-    });
-    return frase.querySelectorAll('.word');
+  /* ---------- progresso ---------- */
+  const barra = $('#progresso');
+  ROTEIRO.forEach(() => barra.appendChild(document.createElement('i')));
+  barra.appendChild(document.createElement('i')); // a pergunta
+  const pontos = barra.querySelectorAll('i');
+  function marcar(i){
+    pontos.forEach((p, n) => p.classList.toggle('ativo', n <= i));
   }
 
-  const intro = gsap.timeline({delay:.5, onComplete: mostrarPergunta});
-  FRASES.forEach(txt => {
-    intro.set('#frase', {opacity:1, y:0, filter:'blur(0px)'});
-    intro.add(() => {
-      const palavras = escrever(txt);
-      gsap.from(palavras, {y:26, opacity:0, filter:'blur(8px)', duration:.85, stagger:.06, ease:'power3.out'});
+  /* ---------- capitulos ---------- */
+  const alvo = $('#linhas'), avancar = $('#avancar');
+  let atual = -1;
+
+  function montar(cap){
+    alvo.innerHTML = '';
+    cap.linhas.forEach((txt, i) => {
+      const p = document.createElement('p');
+      p.className = 'linha' + (cap.abertura && i === 0 ? ' abertura' : '');
+      p.textContent = txt;
+      alvo.appendChild(p);
     });
-    intro.to({}, {duration: 1.7 + txt.length*0.026});
-    intro.to('#frase', {opacity:0, y:-18, filter:'blur(6px)', duration:.6, ease:'power2.in'});
-  });
+    return alvo.querySelectorAll('.linha');
+  }
+
+  function mostrarCapitulo(i){
+    atual = i;
+    const cap = ROTEIRO[i];
+    const linhas = montar(cap);
+    avancar.textContent = cap.botao;
+    marcar(i);
+
+    gsap.set(avancar, {opacity:0, pointerEvents:'none'});
+    gsap.timeline()
+      .from(linhas, {
+        opacity:0, y:20, filter:'blur(6px)',
+        duration:.9, stagger:.45, ease:'power2.out'
+      })
+      .to(avancar, {opacity:1, duration:.7, ease:'power2.out',
+        onComplete(){ avancar.style.pointerEvents = 'auto'; }}, '-=.2');
+  }
+
+  function proximo(){
+    gsap.to('#capitulo', {
+      opacity:0, y:-16, filter:'blur(6px)', duration:.5, ease:'power2.in',
+      onComplete(){
+        window.scrollTo(0,0);
+        gsap.set('#capitulo', {y:0, filter:'blur(0px)', opacity:1});
+        if(atual + 1 < ROTEIRO.length) mostrarCapitulo(atual + 1);
+        else mostrarPergunta();
+      }
+    });
+  }
+  avancar.addEventListener('click', proximo);
 
   /* ---------- pergunta ---------- */
+  $('#selo').textContent    = SELO;
   $('#titulo').textContent  = PERGUNTA;
-  $('#sub').textContent     = SUBTITULO;
   $('#ftitulo').textContent = TITULO_SIM;
-  $('#ftexto').textContent  = TEXTO_SIM;
+  $('#ir').textContent      = BOTAO_FINAL;
+  $('#ir').href             = DESTINO;
+  FINAL.forEach(txt => {
+    const p = document.createElement('p');
+    p.className = 'linha';
+    p.textContent = txt;
+    $('#flinhas').appendChild(p);
+  });
 
-  let jaMostrou = false;
+  const nao = $('#nao'), sim = $('#sim');
+  if(!MOSTRAR_NAO) nao.remove();
+
   function mostrarPergunta(){
-    if(jaMostrou) return;
-    jaMostrou = true;
-    intro.kill();
-    $('#skip').style.display = 'none';
-    gsap.to('#intro', {opacity:0, duration:.4, onComplete(){
-      $('#intro').style.display = 'none';
-      $('#pergunta').style.display = 'block';
-      gsap.timeline()
-        .from('.selo',   {opacity:0, y:14, duration:.6, ease:'power2.out'})
-        .from('#titulo', {opacity:0, y:34, scale:.92, duration:.9, ease:'back.out(1.5)'}, '-=.25')
-        .from('.sub',    {opacity:0, y:16, duration:.6}, '-=.5')
-        .from('#sim',    {opacity:0, scale:.6, duration:.6, ease:'back.out(2)'}, '-=.3')
-        .from('#nao',    {opacity:0, scale:.6, duration:.6, ease:'back.out(2)'}, '-=.45')
-        .add(() => { gsap.to('#sim', {scale:1.05, duration:1.1, yoyo:true, repeat:-1, ease:'sine.inOut'}); });
-    }});
+    $('#capitulo').style.display = 'none';
+    $('#pergunta').style.display = 'block';
+    marcar(pontos.length - 1);
+    const tl = gsap.timeline()
+      .from('#selo',   {opacity:0, y:14, duration:.7, ease:'power2.out'})
+      .from('#titulo', {opacity:0, y:30, scale:.93, duration:1, ease:'back.out(1.4)'}, '-=.3')
+      .from('#sim',    {opacity:0, scale:.6, duration:.7, ease:'back.out(2)'}, '-=.3');
+    if(MOSTRAR_NAO) tl.from('#nao', {opacity:0, scale:.6, duration:.7, ease:'back.out(2)'}, '-=.55');
+    tl.add(() => { gsap.to(sim, {scale:1.05, duration:1.2, yoyo:true, repeat:-1, ease:'sine.inOut'}); });
   }
-  $('#skip').addEventListener('click', mostrarPergunta);
 
   /* ---------- o botao "Nao" foge ---------- */
-  const nao = $('#nao'), sim = $('#sim'), area = $('#botoes');
   let fugas = 0;
   function fugir(e){
     if(e && e.cancelable) e.preventDefault();
     fugas++;
     nao.textContent = TEIMOSIAS[Math.min(fugas, TEIMOSIAS.length-1)];
 
-    const a = area.getBoundingClientRect(), b = nao.getBoundingClientRect();
-    const maxX = Math.max(10, (a.width  - b.width)/2  + 30);
+    const a = $('#botoes').getBoundingClientRect(), b = nao.getBoundingClientRect();
+    const maxX = Math.max(10, (a.width  - b.width)/2  + 26);
     const maxY = Math.max(10, (a.height - b.height)/2 - 6);
 
     gsap.to(nao, {
       x: gsap.utils.random(-maxX, maxX),
       y: gsap.utils.random(-maxY, maxY),
-      scale: Math.max(.42, 1 - fugas*0.09),
+      scale: Math.max(.45, 1 - fugas*0.08),
       rotation: gsap.utils.random(-14,14),
       duration:.38, ease:'power3.out', overwrite:'auto'
     });
-    gsap.to(sim, {scale: 1 + fugas*0.07, duration:.4, ease:'back.out(2)', overwrite:'auto'});
+    gsap.to(sim, {scale: 1 + fugas*0.06, duration:.4, ease:'back.out(2)', overwrite:'auto'});
 
     if(fugas >= TEIMOSIAS.length){
       nao.style.pointerEvents = 'none';
-      gsap.to(nao, {opacity:0, scale:0, duration:.5, delay:.6, ease:'back.in(2)'});
-      gsap.to(sim, {scale:1.25, duration:.6, ease:'elastic.out(1,.5)', overwrite:'auto',
-        onComplete(){ gsap.to(sim, {scale:1.32, duration:1, yoyo:true, repeat:-1, ease:'sine.inOut'}); }});
+      gsap.to(nao, {opacity:0, scale:0, duration:.5, delay:.7, ease:'back.in(2)'});
+      gsap.to(sim, {scale:1.22, duration:.6, ease:'elastic.out(1,.5)', overwrite:'auto',
+        onComplete(){ gsap.to(sim, {scale:1.28, duration:1.1, yoyo:true, repeat:-1, ease:'sine.inOut'}); }});
     }
   }
-  nao.addEventListener('mouseenter', fugir);
-  nao.addEventListener('touchstart', fugir, {passive:false});
-  nao.addEventListener('click', fugir);
+  if(MOSTRAR_NAO){
+    nao.addEventListener('mouseenter', fugir);
+    nao.addEventListener('touchstart', fugir, {passive:false});
+    nao.addEventListener('click', fugir);
+  }
 
   /* ---------- explosao de coracoes ---------- */
   function explodir(){
     const r = sim.getBoundingClientRect();
     const cx = r.left + r.width/2, cy = r.top + r.height/2;
-    for(let i=0;i<70;i++){
+    for(let i=0;i<80;i++){
       const el = coracao(cx, cy, 16 + Math.random()*34);
-      const ang = Math.random()*Math.PI*2, dist = 140 + Math.random()*520;
+      const ang = Math.random()*Math.PI*2, dist = 140 + Math.random()*560;
       gsap.set(el, {xPercent:-50, yPercent:-50});
       gsap.to(el, {
         x: Math.cos(ang)*dist,
         y: Math.sin(ang)*dist - 120,
         rotation: gsap.utils.random(-300,300),
         opacity: 0,
-        duration: 1.6 + Math.random()*1.6,
+        duration: 1.6 + Math.random()*1.8,
         ease:'power2.out',
         onComplete(){ el.remove(); }
       });
@@ -329,34 +470,24 @@
     explodir();
 
     gsap.timeline()
-      .to(sim, {scale:1.45, duration:.16, ease:'power2.out'})
-      .to('#pergunta', {opacity:0, scale:.9, filter:'blur(10px)', duration:.6, ease:'power2.in'})
+      .to(sim, {scale:1.4, duration:.16, ease:'power2.out'})
+      .to('#pergunta', {opacity:0, scale:.92, filter:'blur(10px)', duration:.6, ease:'power2.in'})
       .add(() => {
         $('#pergunta').style.display = 'none';
         $('#final').style.display = 'block';
+        gsap.set('#progresso', {opacity:0});
+        window.scrollTo(0,0);
       })
-      .from('#ftitulo', {opacity:0, scale:.6, y:30, duration:1, ease:'back.out(1.7)'})
-      .from('#ftexto',  {opacity:0, y:20, duration:.7}, '-=.5')
-      .add(irEmbora);
+      .from('#ftitulo', {opacity:0, scale:.7, y:26, duration:1, ease:'back.out(1.7)'})
+      .from('#flinhas .linha', {opacity:0, y:18, filter:'blur(6px)', duration:.8, stagger:.45, ease:'power2.out'}, '-=.4')
+      .from('#ir', {opacity:0, scale:.8, duration:.8, ease:'back.out(1.8)'}, '-=.2')
+      .add(() => { gsap.to('#ir', {scale:1.05, duration:1.2, yoyo:true, repeat:-1, ease:'sine.inOut'}); });
 
     if(!reduz) for(let i=0;i<40;i++) setTimeout(flutuar, i*90);
   });
 
-  /* ---------- redirecionar ---------- */
-  function irEmbora(){
-    if(!DESTINO || /SEU-SITE-AQUI/.test(DESTINO)){
-      console.warn('Edite a constante DESTINO no topo do index.html para ativar o redirecionamento.');
-      return;
-    }
-    const indo = $('#indo');
-    indo.hidden = false;
-    $('#link').href = DESTINO;
-    gsap.from(indo, {opacity:0, y:14, duration:.6});
-    gsap.to('.barra i', {
-      width:'100%', duration:3, ease:'power1.inOut',
-      onComplete(){ window.location.href = DESTINO; }
-    });
-  }
+  /* ---------- comeco ---------- */
+  gsap.delayedCall(.4, () => mostrarCapitulo(0));
 })();
 </script>
 </body>
