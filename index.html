@@ -120,6 +120,20 @@
   }
   #progresso i.ativo{background:var(--rosa-claro);transform:scale(1.4)}
 
+  /* ---- som ---- */
+  #som{
+    position:fixed;top:16px;right:16px;z-index:5;
+    width:42px;height:42px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:1.1rem;line-height:1;cursor:pointer;
+    background:rgba(255,255,255,.08);color:var(--creme);
+    border:1px solid rgba(255,255,255,.2);
+    backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+    opacity:0;pointer-events:none;transition:opacity .6s,background .3s;
+  }
+  #som.visivel{opacity:1;pointer-events:auto}
+  #som:hover{background:rgba(255,255,255,.16)}
+
   @media (max-width:520px){
     #stage{gap:26px;padding:56px 18px 80px}
     #botoes{min-height:200px}
@@ -244,6 +258,10 @@
 
   // 7) O botao "Nao" foge e vai trocando de texto:
   const TEIMOSIAS = ["Não","Tem certeza?","Pensa com carinho...","Eu vi você sorrindo, hein","Esse botão não funciona 😌","Tá fugindo de mim? 🥺","Desiste, vai...","Tá bom: eu insisto. SIM! 💘"];
+
+  // 8) Musica de fundo (comeca no primeiro toque, em loop). Volume de 0 a 1.
+  const MUSICA = "musica.mp3";
+  const VOLUME = 0.6;
 </script>
 <!-- ========================================================= -->
 
@@ -274,6 +292,7 @@
 </div>
 
 <div id="progresso"></div>
+<button id="som" aria-label="Pausar música">🔊</button>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script>
@@ -473,6 +492,47 @@
       .add(() => { gsap.to('#ir', {scale:1.05, duration:1.2, yoyo:true, repeat:-1, ease:'sine.inOut'}); });
 
     if(!reduz) for(let i=0;i<40;i++) setTimeout(flutuar, i*90);
+  });
+
+  /* ---------- musica de fundo ---------- */
+  const musica = new Audio(MUSICA);
+  musica.loop = true;
+  musica.preload = 'auto';
+  const som = $('#som');
+  let tocando = false;
+
+  function atualizarBotao(){
+    som.textContent = tocando ? '🔊' : '🔇';
+    som.setAttribute('aria-label', tocando ? 'Pausar música' : 'Tocar música');
+  }
+  let tentando = false;
+  function tocar(){
+    if(tocando || tentando) return;
+    tentando = true;
+    musica.volume = 0;
+    musica.play().then(() => {
+      tocando = true;
+      atualizarBotao();
+      som.classList.add('visivel');
+      document.removeEventListener('click', iniciarMusica, true);
+      document.removeEventListener('touchend', iniciarMusica, true);
+      gsap.to(musica, {volume:VOLUME, duration:3, ease:'sine.inOut'});
+    }).catch(() => {}).finally(() => { tentando = false; });
+  }
+  function iniciarMusica(e){
+    if(e.target !== som) tocar();
+  }
+  document.addEventListener('click', iniciarMusica, true);
+  document.addEventListener('touchend', iniciarMusica, true);
+
+  som.addEventListener('click', () => {
+    if(tocando){
+      musica.pause();
+      tocando = false;
+      atualizarBotao();
+    } else {
+      tocar();
+    }
   });
 
   /* ---------- comeco ---------- */
